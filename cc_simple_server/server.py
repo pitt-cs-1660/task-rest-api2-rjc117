@@ -42,12 +42,12 @@ async def create_task(task_data: TaskCreate):
         "INSERT INTO tasks (title, description, completed) VALUES(?, ?, ?)",
         (task_data.title, task_data.description, task_data.completed),
     )
-    response_model = cursor.fetchone()
+    task_id = cursor.lastrowid
 
     conn.commit()
     conn.close()
 
-    return response_model
+    return TaskRead(id=task_id, title=task_data.title, description=task_data.description, completed=task_data.completed)
 
 
 # GET ROUTE to get all tasks
@@ -66,11 +66,10 @@ async def get_tasks():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM tasks")
     rows = cursor.fetchall()
-    response_model = rows
 
     conn.close()
 
-    return response_model
+    return [TaskRead(id=task[0], title=task[1], description=task[2], completed=task[3]) for task in rows]
 
 
 # UPDATE ROUTE data is sent in the body of the request and the task_id is in the URL
@@ -96,13 +95,12 @@ async def update_task(task_id: int, task_data: TaskCreate):
             "UPDATE tasks SET title = ?, description = ?, completed = ? WHERE id = ?",
             (task_data.title, task_data.description, task_data.completed, task_id),
         )
-
-        response_model = cursor.fetchone()
+        task_id = cursor.lastrowid
 
         conn.commit()
         conn.close()
 
-        return response_model
+        return TaskRead(id=task_id, title=task_data.title, description=task_data.description, completed=task_data.completed)
     else:
         conn.commit()
         conn.close()
