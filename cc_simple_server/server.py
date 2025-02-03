@@ -87,7 +87,7 @@ async def update_task(task_id: int, task_data: TaskCreate):
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT 1 FROM tasks WHERE task_id = ?", (task_id))
+    cursor.execute("SELECT 1 FROM tasks WHERE id = ?", (task_id))
     result = cursor.fetchone()
 
     if result:
@@ -121,7 +121,7 @@ async def delete_task(task_id: int):
     """
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT 1 FROM tasks WHERE task_id = ?", (task_id))
+    cursor.execute("SELECT 1 FROM tasks WHERE id = ?", (task_id))
     result = cursor.fetchone()
 
     if result:
